@@ -112,7 +112,7 @@ if (!isset($pageTitle)) {
         <div class="nav-foot">
             <p>Signed in as <strong><?php echo htmlspecialchars($name); ?></strong></p>
             <small>Malltiverse • v1.0.0</small><br>
-            <small><a href="index.php">Sign out</a></small>
+            <small><a href="./utils/signout.php">Sign out</a></small>
         </div>
     </aside>
 
