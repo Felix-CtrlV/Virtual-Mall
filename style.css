@@ -100,6 +100,9 @@ nav a{
     text-decoration: none;
     font-size: 20px;
     margin-right: 50px;
+     background:linear-gradient(45deg,#000dff,#ff00e6,#ff7700);
+    -webkit-background-clip:text;
+    
 }
 footer{
     background-color:rgb(42, 41, 41) ;
@@ -110,7 +113,8 @@ footer{
 }
 footer p{
     font-size:18px;
+    padding:20px;
 }
 .home a:hover{
-    color: blue;
+    color: rgb(0, 224, 249);
 }
