@@ -15,6 +15,12 @@ $supplierresult = mysqli_query($conn, $supplierquery);
 ?>
 
 <section class="section active">
+    <form class="search" method="post">
+        <lord-icon class="search-icon" src="https://cdn.lordicon.com/xaekjsls.json" trigger="loop" delay="2000"
+            colors="primary:#ffffff" style="width:13px;height:13px">
+        </lord-icon>
+        <input type="text" name="searchshop" id="searchshop" placeholder="Search Shops..." />
+    </form>
     <div class="card">
         <div class="section-header" style="margin-bottom: 12px;">
             <div>

@@ -111,7 +111,7 @@ $rentrow = mysqli_fetch_assoc($rentresult);
             <div class="card-header">
                 <div>
                     <div class="card-title">Average Rating</div>
-                    <div class="card-value"><?= $average_rating ?>.0★</div>
+                    <div class="card-value"><?= $average_rating ?>.0<span style="color: #eab308;">★</span></div>
                 </div>
                 <span class="card-chip">Mall-wide</span>
             </div>

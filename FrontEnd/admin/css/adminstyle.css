@@ -182,13 +182,14 @@ a {
 
 .search {
     position: relative;
+    margin-bottom: 10px;
 }
 
 .search input {
     background: rgba(15, 23, 42, 0.9);
     border-radius: 999px;
     border: 1px solid rgba(148, 163, 184, 0.4);
-    padding: 7px 30px 7px 24px;
+    padding: 7px 30px 7px 27px;
     color: var(--text);
     font-size: 12px;
     width: 190px;
@@ -485,3 +486,4 @@ td {
     color: var(--text);
     padding: 8px;
 }
+
