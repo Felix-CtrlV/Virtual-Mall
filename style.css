@@ -167,24 +167,6 @@ nav a{
     margin-bottom:500px;
 }
 
-/* Search Box */
-.search-box {
-    position: relative;
-}
-
-.search-box input {
-    padding: 8px 35px 8px 15px;
-    width:400px;
-    border-radius: 20px;
-    border: none;
-    outline: none;
-    font-size:20px;
-    
-}
-.search-box i{
-    font-size:20px;
-}
-
 
 .home a{
     font-size:25px;
