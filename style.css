@@ -8,7 +8,15 @@
   color: #c5a47e;
  
 }
+/*Smooth Scroll*/
+html {
+  scroll-behavior:smooth;
+}
 
+/* Adds space so the top of the section doesn't hit the very edge of the screen */
+#contact {
+  scroll-margin-top: 80px; 
+}
 /*Virtual Mall Logo*/
 /* Navigation Container*/
 .home {
@@ -1272,4 +1280,110 @@ p {
     text-decoration: none;
 }
 
->>>>>>> 192bfe062bcc5ad7eadf3205e5009829355c0c64
+/*Contact Section*/
+/* Contact Section Styling */
+.contact-section {
+    padding: 80px 5%;
+    background-color: #050505; /* Deep black to match your footer */
+    color: #ffffff;
+    border-top: 1px solid #222;
+}
+
+.contact-wrapper {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.contact-content {
+    display: grid;
+    grid-template-columns: 1fr 1.5fr;
+    gap: 50px;
+    align-items: center;
+}
+
+.contact-text h2 {
+    font-size: 2.5rem;
+    margin: 20px 0;
+    letter-spacing: 1px;
+}
+
+.contact-text p {
+    color: #aaa;
+    line-height: 1.6;
+    margin-bottom: 30px;
+}
+
+.contact-details {
+    list-style: none;
+    padding: 0;
+}
+
+.contact-details li {
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    color: #eee;
+}
+
+.contact-details i {
+    color: #7000ff; /* Purple accent matching VR theme */
+}
+
+/* Form Styling */
+.contact-main-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    background: #111;
+    padding: 30px;
+    border-radius: 15px;
+    border: 1px solid #333;
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+}
+
+.contact-main-form input, 
+.contact-main-form textarea {
+    padding: 15px;
+    background: #000;
+    border: 1px solid #444;
+    color: #fff;
+    border-radius: 8px;
+    outline: none;
+}
+
+.contact-main-form input:focus, 
+.contact-main-form textarea:focus {
+    border-color: #7000ff;
+}
+
+.contact-submit {
+    background: #fff;
+    color: #000;
+    padding: 15px;
+    border: none;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.contact-submit:hover {
+    background: #7000ff;
+    color: #fff;
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+    .contact-content {
+        grid-template-columns: 1fr;
+    }
+    .form-row {
+        grid-template-columns: 1fr;
+    }
+}
