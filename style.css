@@ -301,6 +301,162 @@ body {
     font-size: 16px;
 }
 
+<<<<<<< HEAD
+/* CARDS */
+.cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 24px;
+    padding: 40px 80px 80px;
+}
+
+.card {
+    background: #0b0b0b;
+    border-radius: 18px;
+    padding: 14px;
+    transition: 0.3s ease;
+    cursor: pointer;
+}
+
+.card img {
+    width: 100%;
+    height: 160px;
+    object-fit: cover;
+    border-radius: 14px;
+}
+
+.card h3 {
+    margin-top: 12px;
+    font-size: 16px;
+}
+
+.card span {
+    font-size: 13px;
+    color: #9ca3af;
+}
+
+.card:hover {
+    transform: translateY(-8px);
+    background: #111;
+}
+
+/* Highlighted card */
+.card.active{
+    background: #f5f5f5;
+    color: #000;
+}
+
+.card.active span {
+    color: #555;
+}
+
+/* RESPONSIVE */
+@media (max-width: 100%) {
+    .cards {
+        padding: 20px;
+    }
+}
+
+
+.coats-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 25px;
+    padding:5px;
+    width:100%;
+    height:20px;
+    
+}
+
+
+
+/* CARD */
+.coat-card {
+    min-width: 300px;
+    /*background: #111;*/
+    padding: 15px;
+    border-radius: 16px;
+    text-align: center;
+    animation: scroll 20s linear infinite;
+}
+
+/* IMAGE */
+.coat-card img {
+    width:100%;
+    height:200px;
+    object-fit: cover;
+    border-radius:10px;
+}
+
+/* PAUSE ON HOVER */
+.coats-container:hover .coat-card {
+    animation-play-state:running;
+}
+/*.coat-card h3{
+    margin-top:15px;
+}*/
+
+/* KEYFRAMES */
+@keyframes scroll {
+    0% {
+        transform: translateX(0)
+    }
+    100% {
+        transform: translateX(calc(-300px * 5));
+    }
+}
+.coats-container{
+    min-height:200px;
+    width:80vw;
+}
+
+/*3D Introduce*/
+.container {
+    display: flex;
+    gap: 24px;
+    max-width: 1200px;
+    padding: 20px;
+    margin-top:200px;
+}
+
+/* Card Styling */
+.card {
+    background-color: #121212;
+    border-radius: 24px;
+    padding: 48px;
+    width: 500px;
+    height: 450px;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    /* Grid background effect */
+    background-image: 
+        linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+}
+.card2 {
+    background-color: #121212;
+    border-radius: 24px;
+    padding: 48px;
+    width: 500px;
+    height: 450px;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    /* Grid background effect */
+    background-image: 
+        linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    margin-left:400px;
+}
+=======
+>>>>>>> 4057ee1cc6a0b88b33856d4e870dd47ab0a7c227
 
 h2 {
     color: #fff;
@@ -806,6 +962,52 @@ p {
     }
 }
 
+<<<<<<< HEAD
+/*Second Section Scroll*/
+/* 1. The Container: Hide the scrollbar and set the stage */
+.coats-container1 {
+  display: flex;
+  overflow: hidden;         /* Hide scrollbar for a clean look */
+  width: 100%;              /* Full width of the parent */
+  /*background: #f4f4f4;*/
+  padding: 20px 0;
+}
+
+/* 2. The Animation Track */
+/* We apply the animation here or to the cards themselves */
+.coat-card1 {
+  flex: 0 0 auto;           /* Keep cards from shrinking */
+  width: 300px;
+  margin: 0 10px;
+  
+  /* Apply the animation */
+  animation: scroll-right 10s linear infinite;
+}
+
+/* 3. The Keyframes */
+@keyframes scroll-right{
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    /* Adjust this value based on the number of cards and their width */
+   transform: translateX(calc(250px * 4));
+  }
+}
+
+/* Pause animation on hover so users can click links */
+.coats-container1:hover .coat-card {
+  animation-play-state: paused;
+}
+
+/* Basic Image Styling */
+.coat-card1 img {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+=======
 
 
 
@@ -1016,6 +1218,9 @@ p {
   100% { transform: translateX(calc(-250px * 6)); }
 }
 
+<<<<<<< HEAD
+>>>>>>> 4057ee1cc6a0b88b33856d4e870dd47ab0a7c227
+=======
 
 /*Top Page Design*/
 .virtual-mall-hero {
@@ -1115,3 +1320,4 @@ p {
     text-decoration: none;
 }
 
+>>>>>>> 192bfe062bcc5ad7eadf3205e5009829355c0c64
