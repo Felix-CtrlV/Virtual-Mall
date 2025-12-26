@@ -1079,7 +1079,7 @@ p {
     height: 450px;
     transform: rotateY(-20deg) rotateX(10deg);
     transform-style: preserve-3d;
-    animation: float 6s ease-in-out infinite;
+    animation: float 7s ease-in-out infinite;
    
 }
 
