@@ -1041,6 +1041,7 @@ p {
   color: #f5ebdc;
   text-transform: uppercase;
   font-weight: bold;
+  align-items: center;
 }
 
 .cosmetics {
@@ -1049,12 +1050,14 @@ p {
   letter-spacing: 5px;
   text-transform: uppercase;
   color: white;
+  align-items: center;
 }
 
 .dior {
   font-family: 'Baskerville', serif;
   font-size: 2.2rem;
   color: white;
+  align-items: center;
 }
 
 .sport-text {
@@ -1064,6 +1067,7 @@ p {
   color: white;
   text-transform: uppercase;
   font-style: italic;
+  align-items: center;
 }
 
 .SkinCate-text {
@@ -1071,6 +1075,7 @@ p {
   font-size: 1.8rem;
   font-style: italic;
   color: white;
+  align-items: center;
 }
 
 /* --- Keyframes --- */
