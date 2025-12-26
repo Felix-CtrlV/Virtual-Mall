@@ -259,11 +259,7 @@ body {
     padding-top: 80px;
 }
 
-.home a{
-    font-size:15px;
-    margin-left:60px;
-    margin:10px;
-}
+
 * {
     margin: 0;
     padding: 0;
@@ -1007,7 +1003,6 @@ p {
   object-fit: cover;
   border-radius: 8px;
 }
-=======
 
 
 
@@ -1218,9 +1213,6 @@ p {
   100% { transform: translateX(calc(-250px * 6)); }
 }
 
-<<<<<<< HEAD
->>>>>>> 4057ee1cc6a0b88b33856d4e870dd47ab0a7c227
-=======
 
 /*Top Page Design*/
 .virtual-mall-hero {
