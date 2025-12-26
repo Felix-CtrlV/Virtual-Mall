@@ -155,7 +155,7 @@ body{
     margin-left:10px;
 
 }
-.title{
+/*.title{
     color: #000dff;
     background:linear-gradient(45deg,#000dff,#ff00e6,#ff7700);
     -webkit-background-clip:text;
@@ -164,7 +164,7 @@ body{
     font-size:25px;
     align-items: center;
     margin: 40px;
-}
+}*/
 .background{
     position: fixed;
     top: 0;
@@ -175,12 +175,12 @@ body{
     z-index:-1;
 }
 
-.mainarea h1{
+/*.mainarea h1{
     text-align: center;
     margin-top: 170px;
     margin-bottom:60px;
   
-}
+}*/
 
 /* Button wrapper */
 .button-group {
