@@ -1409,7 +1409,7 @@ p {
 }
 
 /*Arrow Scroll Testing*/
-.scroll-top-btn {
+.scroll-top-btn{
     /* Position the button */
     position: fixed;
     bottom: 30px;
