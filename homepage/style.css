@@ -1438,7 +1438,7 @@ p {
     top: -8px;
     left: -8px;
     right: -8px;
-    bottom: -8px;
+    bottom: -9px;
     border: 2px dashed #0b112b; /* Dashed border */
     border-radius: 50%;
 }
