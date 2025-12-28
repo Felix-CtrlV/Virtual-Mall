@@ -26,11 +26,11 @@ include("../../BackEnd/config/dbconfig.php");
         <form class="loginform" action="" method="post">
             <div class="row">
                 <label for="username">Username :</label>
-                <input type="text" id="username" name="username" required><br><br>
+                <input autocomplete="off" type="text" id="username" name="username" required><br><br>
             </div>
             <div class="row">
                 <label for="password">Password :</label>
-                <input type="password" id="password" name="password" required><br><br>
+                <input autocomplete="off" type="password" id="password" name="password" required><br><br>
             </div>
             <span class="showerror">Username or Password is Incorrect</span>
             <button type="submit" name="submit" class="login-btn">
@@ -46,51 +46,50 @@ include("../../BackEnd/config/dbconfig.php");
 
 <script>
     const form = document.querySelector(".loginform");
-    const btnText = document.querySelector(".btn-text");
-    const icon = document.getElementById("loadingIcon");
+    form.addEventListener("submit", (e) => {
+        e.preventDefault();
 
-    form.addEventListener("submit", () => {
-        btnText.style.display = "none";
-        icon.style.display = "block";
+        const username = document.getElementById('username').value;
+        const password = document.getElementById('password').value;
+
+        document.querySelector(".btn-text").style.display = "none";
+        document.getElementById("loadingIcon").style.display = "block";
+
+        login(username, password);
     });
 </script>
 
-<?php
-if (isset($_POST["submit"])) {
-    session_start();
-    $username = trim($_POST["username"]);
-    $password = trim($_POST["password"]);
 
-    $adminquery = "SELECT * FROM admins WHERE name='$username'";
-    $adminresult = mysqli_query($conn, $adminquery);
-    $admininfo = mysqli_fetch_assoc($adminresult);
 
-    if (!$admininfo) {
-        echo "<script>
-            document.querySelector('.btn-text').style.display = 'block';
-            document.getElementById('loadingIcon').style.display = 'none';
-            document.querySelector('.showerror').style.display = 'block';
-        </script>";
-        exit();
+<script>
+    function login(username, password) {
+        const errortext = document.querySelector('.showerror');
+        const buttontext = document.querySelector('.btn-text');
+        const loadingicon = document.getElementById('loadingIcon');
+
+        fetch('utils/admin_login.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username, password })
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    window.location.href = 'dashboard.php';
+                } else {
+                    errortext.style.display = 'block';
+                    buttontext.style.display = 'block';
+                    loadingicon.style.display = 'none';
+                }
+            })
+            .catch(err => {
+                console.error('Login error:', err);
+                errortext.style.display = 'block';
+                buttontext.style.display = 'block';
+                loadingicon.style.display = 'none';
+            });
     }
 
-    
-    if ($password === $admininfo['password']) { 
-        $_SESSION["admin_logged_in"] = true;
-        $adminid = $admininfo['adminid'];
-        header("Location: dashboard.php?adminid=$adminid");
-        exit();
-    } else {
-        echo "<script>
-            document.querySelector('.btn-text').style.display = 'block';
-            document.getElementById('loadingIcon').style.display = 'none';
-            document.querySelector('.showerror').style.display = 'block';
-        </script>";
-    }
-}
-
-?>
-
-
+</script>
 
 </html>

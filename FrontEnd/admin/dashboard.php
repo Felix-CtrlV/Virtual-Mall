@@ -21,10 +21,17 @@ $lastweek = mysqli_fetch_assoc($resultlastweek);
 $thisweekcount = $thisweek['this_week'];
 $lastweekcount = $lastweek['last_week'];
 
-$diff = $thisweekcount - $lastweekcount;
-if ($lastweekcount > 0) {
+$thisweekcount = (int) $thisweek['this_week'];
+$lastweekcount = (int) $lastweek['last_week'];
+
+$diff = 0;
+$percent = 0;
+
+if ($thisweekcount > 0 && $lastweekcount > 0) {
+    $diff = $thisweekcount - $lastweekcount;
     $percent = round(($diff / $lastweekcount) * 100, 1);
-} else {
+} elseif ($thisweekcount > 0 && $lastweekcount == 0) {
+    $diff = $thisweekcount;
     $percent = 100;
 }
 
@@ -50,7 +57,7 @@ $supplierdiff = $thismonthcount - $lastmonthcount;
 
 // ...................................................................................................................................................
 
-$ratingquery = "SELECT Round(AVG(rating)) AS average_rating FROM reviews;";
+$ratingquery = "SELECT Round(AVG(rating),1) AS average_rating FROM reviews;";
 $ratingresult = mysqli_query($conn, $ratingquery);
 $ratingrow = mysqli_fetch_assoc($ratingresult);
 $average_rating = $ratingrow["average_rating"];
@@ -76,11 +83,10 @@ if ($ratinglastmonthcount > 0) {
 // ...................................................................................................................................................
 
 $rentquery = " SELECT
-    (SELECT COUNT(*) FROM suppliers) AS total_shops, COUNT(DISTINCT CASE WHEN rp.paid_date <= LAST_DAY(CURRENT_DATE)  AND rp.due_date  >= CURRENT_DATE THEN rp.supplier_id
-    END) AS paid_shops, ROUND( COUNT(DISTINCT CASE WHEN rp.paid_date <= LAST_DAY(CURRENT_DATE) AND rp.due_date  >= CURRENT_DATE THEN rp.supplier_id END) * 100.0
-    / NULLIF((SELECT COUNT(*) FROM suppliers), 0), 2) AS payment_percentage,
-    COUNT(DISTINCT CASE WHEN rp.due_date < CURRENT_DATE THEN rp.supplier_id END) AS overdue_shops, COALESCE(SUM(CASE WHEN rp.paid_date >= DATE_FORMAT(CURRENT_DATE, '%Y-%m-01') 
-    AND rp.paid_date <= CURRENT_DATE THEN rp.paid_amount END), 0) AS total_collected_amount FROM rent_payments rp;";
+COUNT(DISTINCT s.supplier_id) AS total_shops, COUNT(DISTINCT CASE WHEN rp.paid_date <= LAST_DAY(CURRENT_DATE) AND rp.due_date  >= CURRENT_DATE THEN s.supplier_id END) AS paid_shops,
+ROUND( COUNT(DISTINCT CASE WHEN rp.paid_date <= LAST_DAY(CURRENT_DATE) AND rp.due_date  >= CURRENT_DATE THEN s.supplier_id END) * 100.0 / NULLIF(COUNT(DISTINCT s.supplier_id), 0),2) AS payment_percentage,
+COUNT(DISTINCT CASE WHEN rp.due_date < CURRENT_DATE THEN s.supplier_id END) AS overdue_shops,COALESCE(SUM(CASE WHEN rp.paid_date >= DATE_FORMAT(CURRENT_DATE, '%Y-%m-01') AND rp.paid_date <= CURRENT_DATE
+THEN rp.paid_amount END), 0) AS total_collected_amount FROM suppliers s LEFT JOIN rent_payments rp ON rp.supplier_id = s.supplier_id WHERE s.status = 'active';";
 $rentresult = mysqli_query($conn, $rentquery);
 $rentrow = mysqli_fetch_assoc($rentresult);
 ?>
@@ -93,7 +99,7 @@ $rentrow = mysqli_fetch_assoc($rentresult);
                     <div class="card-title">Total Customers</div>
                     <div class="card-value"><?= $totalcustomer ?></div>
                 </div>
-                <span class="card-chip">+<?= $diff ?> new</span>
+                <span class="card-chip"><?= $diff ?>+ new</span>
             </div>
             <div class="card-trend trend-up">+<?= $percent ?>% vs last week</div>
         </div>
@@ -111,7 +117,7 @@ $rentrow = mysqli_fetch_assoc($rentresult);
             <div class="card-header">
                 <div>
                     <div class="card-title">Average Rating</div>
-                    <div class="card-value"><?= $average_rating ?>.0★</div>
+                    <div class="card-value"><?= $average_rating ?><span style="color: #eab308;">★</span></div>
                 </div>
                 <span class="card-chip">Mall-wide</span>
             </div>
@@ -120,12 +126,12 @@ $rentrow = mysqli_fetch_assoc($rentresult);
         <div class="card">
             <div class="card-header">
                 <div>
-                    <div class="card-title">Monthly Rent Collected</div>
+                    <div class="card-title">Monthly-Rent Collected</div>
                     <div class="card-value">$<?= $rentrow['total_collected_amount'] ?></div>
                 </div>
                 <span class="card-chip"><?= $rentrow['payment_percentage'] ?>% collected</span>
             </div>
-            <div class="card-trend trend-down"><?= $rentrow['overdue_shops'] ?> overdue shops</div>
+            <div class="card-trend trend-down"><?= $rentrow['overdue_shops'] ?> overdue shop(s)</div>
         </div>
     </div>
 </section>
