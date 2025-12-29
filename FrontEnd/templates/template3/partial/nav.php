@@ -27,7 +27,10 @@
                     </button>
                 </form>
 
-
-        </div>
+        <form class="search-bar">
+            <input type="text" name="search_product" id="searchBar" placeholder="Search.....">
+            <i class="fas fa-search"></i>
+        </form>
+    </div>
 </nav>
 
