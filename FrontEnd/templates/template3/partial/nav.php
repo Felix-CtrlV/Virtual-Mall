@@ -27,8 +27,8 @@
     
     
                 
-                <form class="search-bar" action="search.php" method="post">
-                    <input type="text" name="searchproduct" placeholder="Search....." required>
+                <form class="search-bar">
+                    <input type="text" placeholder="Search....." required>
                          <i class="fas fa-search"></i>
                     </button>
                 </form>
@@ -36,4 +36,3 @@
 
         </div>
 </nav>
-
