@@ -29,9 +29,9 @@
             </li>
         </ul>
 
-        <form class="search-bar">
+        <div class="search-bar">
             <input type="text" name="search_product" id="searchBar" placeholder="Search.....">
             <i class="fas fa-search"></i>
-        </form>
+        </div>
     </div>
 </nav>
