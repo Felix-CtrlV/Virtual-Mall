@@ -11,446 +11,466 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 }
 
 // 2. Fetch Stats
-$sql_stats = "SELECT rating FROM reviews";
+$supplier_id = isset($_GET['supplier_id']) ? (int)$_GET['supplier_id'] : 1;
+
+// --- 1. Handle Form Submission ---
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $rating = (int)$_POST['rating'];
+    $name   = trim($_POST['name']);
+    $email  = trim($_POST['email']);
+    $review_text = trim($_POST['review_text']);
+
+    if ($rating > 0 && !empty($email)) {
+        // Find customer ID based on email
+        $cust_stmt = $conn->prepare("SELECT customer_id FROM customers WHERE email = ?");
+        $cust_stmt->bind_param("s", $email);
+        $cust_stmt->execute();
+        $res = $cust_stmt->get_result();
+
+        if ($res->num_rows > 0) {
+            $customer = $res->fetch_assoc();
+
+            // Insert Review
+            $stmt = $conn->prepare("INSERT INTO reviews (supplier_id, customer_id, review, rating, created_at) VALUES (?, ?, ?, ?, NOW())");
+            $stmt->bind_param("iisi", $supplier_id, $customer['customer_id'], $review_text, $rating);
+
+            if ($stmt->execute()) {
+                echo "<script>alert('Review submitted successfully!'); window.location.href='?supplier_id=$supplier_id&page=review';</script>";
+            } else {
+                echo "<script>alert('Error submitting review.');</script>";
+            }
+        } else {
+            echo "<script>alert('Email not found. Please register first.');</script>";
+        }
+    } else {
+        echo "<script>alert('Please select a star rating and fill all fields.');</script>";
+    }
+}
+
+// --- 2. Fetch Stats for Bars ---
+$sql_stats = "SELECT rating FROM reviews WHERE supplier_id = $supplier_id";
 $result_stats = $conn->query($sql_stats);
 
 $total_reviews = 0;
-$total_stars = 0;
-$star_counts = [1 => 0, 2 => 0, 3 => 0, 4 => 0, 5 => 0];
+$sum_ratings = 0;
+$star_counts = [5 => 0, 4 => 0, 3 => 0, 2 => 0, 1 => 0];
 
 if ($result_stats->num_rows > 0) {
     while ($row = $result_stats->fetch_assoc()) {
-        $r = $row['rating'];
-
-        // FIX: Check if $r is not null before using it as an array key
-        if ($r !== null && isset($star_counts[$r])) {
+        $r = (int)$row['rating'];
+        if ($r >= 1 && $r <= 5) {
             $star_counts[$r]++;
-            // Only add to totals if the rating is valid
-            $total_stars += $r;
+            $sum_ratings += $r;
             $total_reviews++;
         }
     }
 }
+$avg_rating = $total_reviews > 0 ? number_format($sum_ratings / $total_reviews, 1) : "0.0";
 
-$average_rating = $total_reviews > 0 ? round($total_stars / $total_reviews, 1) : 0;
-
-// 3. Fetch Recent Reviews
+// --- 3. Fetch Recent Reviews ---
 $sql_reviews = "
-    SELECT r.review, r.rating, r.created_at, c.name, c.image 
+    SELECT r.*, c.name, c.image 
     FROM reviews r 
     JOIN customers c ON r.customer_id = c.customer_id 
+    WHERE r.supplier_id = $supplier_id 
     ORDER BY r.created_at DESC LIMIT 5";
-$result_reviews = $conn->query($sql_reviews);
+$reviews_res = $conn->query($sql_reviews);
 ?>
 
 <style>
-    /* --- CSS VARIABLES FOR COLORS --- */
     :root {
-        /* Primary: Gold (Active Star), Secondary: Light Grey (Inactive Star) */
-        --star-primary: #c5a47e;
-        --star-secondary: #e0e0e0;
+        --gold: #ffc107;
+        /* Active star color */
+        --grey: #e0e0e0;
+        /* Inactive star color */
+        --text-main: #333;
         --bg-white: #ffffff;
-        --text-dark: #333333;
     }
 
-    /* --- PAGE OVERRIDES --- */
-    /* Force specific styles for the Review Page to look like the reference image */
-
-    /* 1. Ensure the Navigation Bar is visible against white content when scrolling */
-    nav.home {
-        background-color: #000 !important;
-        /* Force black background for header */
-        border-bottom: 1px solid #333;
+    /* --- LAYOUT --- */
+    .review-container {
+        max-width: 1100px;
+        margin: 40px auto;
+        padding: 0 20px;
+        font-family: 'Segoe UI', sans-serif;
     }
 
-    /* 2. Main Container - White Background */
-    .review-page-container {
-        background-color: var(--bg-white);
-        color: var(--text-dark);
-        min-height: 100vh;
-        padding: 120px 10% 80px;
-        /* Top padding to account for fixed header */
-        font-family: 'Roboto', sans-serif;
-        /* Clean font for reviews */
-    }
-
-    /* --- STATS SECTION --- */
-    .review-stats-container {
+    /* --- TOP STATS SECTION --- */
+    .stats-panel {
         display: flex;
-        flex-wrap: wrap;
-        gap: 50px;
-        background: #f9f9f9;
-        /* Very light grey for contrast against white */
-        padding: 40px;
-        border-radius: 20px;
-        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
-        margin-bottom: 60px;
+        gap: 40px;
+        background: var(--bg-white);
+        padding: 30px;
+        border-radius: 12px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        margin-bottom: 40px;
+        align-items: center;
     }
 
-    .rating-bars {
+    .bars-area {
         flex: 2;
-        min-width: 300px;
     }
 
+    /* Bar Row: Label | Track | Percent | Count */
     .bar-row {
         display: flex;
         align-items: center;
-        gap: 15px;
-        margin-bottom: 12px;
-        font-weight: 500;
-        font-size: 0.95rem;
-    }
-
-    .star-label {
-        width: 50px;
+        margin-bottom: 10px;
+        font-size: 14px;
         color: #555;
     }
 
-    .progress-track {
-        flex-grow: 1;
+    .bar-label {
+        width: 50px;
+        font-weight: 600;
+        font-size: 12px;
+    }
+
+    .bar-track {
+        flex: 1;
         height: 8px;
-        background: var(--star-secondary);
-        border-radius: 10px;
+        background: #eee;
+        border-radius: 4px;
+        margin: 0 15px;
         overflow: hidden;
     }
 
-    .progress-fill {
+    .bar-fill {
         height: 100%;
-        background: var(--star-primary);
-        border-radius: 10px;
+        background: #e0bb7d;
+        border-radius: 4px;
     }
 
-    .percentage-label {
-        width: 50px;
+    /* Muted gold for bars */
+    .bar-percent {
+        width: 45px;
         text-align: right;
-        color: #777;
-        font-size: 0.9rem;
+        color: #888;
+        font-size: 13px;
     }
 
-    .count-label {
-        width: 40px;
+    .bar-count {
+        width: 35px;
         text-align: right;
-        color: #999;
-        font-size: 0.8rem;
+        color: #aaa;
+        font-size: 13px;
     }
 
-    .overall-rating {
+    /* Big Score Display */
+    .score-area {
         flex: 1;
-        min-width: 200px;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        background: #fff;
-        border-radius: 20px;
-        padding: 20px;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        text-align: center;
+        background: #fffbea;
+        padding: 25px;
+        border-radius: 12px;
+        min-width: 180px;
     }
 
-    .big-score {
-        font-size: 4rem;
+    .big-rating {
+        font-size: 48px;
         font-weight: 800;
-        color: var(--star-primary);
+        color: #d4a017;
         line-height: 1;
     }
 
-    .stars-display {
-        color: var(--star-primary);
-        font-size: 1.5rem;
+    .big-stars {
+        color: var(--gold);
+        font-size: 20px;
         margin: 10px 0;
     }
 
-    /* --- CONTENT GRID --- */
-    .content-grid {
+    /* --- CONTENT SPLIT --- */
+    .content-split {
         display: grid;
-        grid-template-columns: 1.2fr 1fr;
-        gap: 60px;
+        grid-template-columns: 1.5fr 1fr;
+        gap: 40px;
     }
 
-    h2.section-title {
-        font-size: 1.8rem;
-        margin-bottom: 25px;
-        color: #000;
+    .section-header {
+        font-size: 20px;
         font-weight: 700;
-        font-family: 'Roboto', sans-serif;
+        margin-bottom: 20px;
+        color: #222;
     }
 
-    /* --- FEEDBACK LIST --- */
-    .review-card {
-        background: #fff;
-        padding: 25px;
-        border-radius: 15px;
-        margin-bottom: 25px;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
-        border: 1px solid #eee;
-        transition: transform 0.3s;
-    }
-
-    .review-card:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
-    }
-
-    .reviewer-header {
+    /* --- REVIEW LIST --- */
+    .review-item {
         display: flex;
         gap: 15px;
+        background: #fff;
+        padding: 20px;
+        border: 1px solid #f0f0f0;
+        border-radius: 10px;
         margin-bottom: 15px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.02);
     }
 
-    .avatar {
-        width: 50px;
-        height: 50px;
+    .u-avatar {
+        width: 45px;
+        height: 45px;
         border-radius: 50%;
         object-fit: cover;
         background: #ddd;
     }
 
-    .reviewer-info h4 {
-        margin: 0;
-        font-size: 1.1rem;
-        color: #000;
-        font-weight: 600;
+    .u-name {
+        font-weight: bold;
+        display: block;
+        margin-bottom: 3px;
+        font-size: 15px;
     }
 
-    .review-date {
-        font-size: 0.8rem;
+    .u-date {
+        font-size: 11px;
         color: #999;
         display: block;
-        margin-top: 2px;
+        margin-bottom: 5px;
     }
 
-    .card-stars {
-        color: var(--star-primary);
-        font-size: 0.9rem;
-        margin-top: 5px;
-    }
-
-    .review-text {
-        color: #555;
-        line-height: 1.6;
-    }
-
-    /* --- REVIEW FORM --- */
-    .review-form-container {
-        background: #fff;
-        padding: 35px;
-        border-radius: 20px;
-        height: fit-content;
-        box-shadow: 0 5px 25px rgba(0, 0, 0, 0.08);
-        border: 1px solid #eee;
-    }
-
-    /* INTERACTIVE STARS */
-    .star-rating-widget {
-        display: flex;
-        gap: 10px;
-        margin-bottom: 10px;
-        cursor: pointer;
-    }
-
-    .star-item {
-        font-size: 2rem;
-        color: var(--star-secondary);
-        transition: color 0.2s;
-    }
-
-    /* Class added by JS when active */
-    .star-item.active {
-        color: var(--star-primary);
-    }
-
-    .input-group {
-        margin-bottom: 20px;
-    }
-
-    .input-group label {
-        display: block;
+    .u-stars {
+        font-size: 11px;
+        color: var(--gold);
         margin-bottom: 8px;
-        color: #333;
-        font-weight: 500;
     }
 
-    .input-group input,
-    .input-group textarea {
-        width: 100%;
-        padding: 14px;
-        background: #f9f9f9;
-        border: 1px solid #ddd;
-        color: #333;
-        border-radius: 8px;
-        outline: none;
-        font-family: inherit;
-        transition: 0.3s;
+    .u-text {
+        font-size: 14px;
+        color: #555;
+        line-height: 1.5;
+        margin: 0;
     }
 
-    .input-group input:focus,
-    .input-group textarea:focus {
-        border-color: var(--star-primary);
+    /* --- REVIEW FORM (IMPROVED) --- */
+    .form-panel {
         background: #fff;
+        padding: 25px;
+        border-radius: 12px;
+        border: 1px solid #eee;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.04);
+        height: fit-content;
+    }
+
+    .input-wrap {
+        margin-bottom: 15px;
+    }
+
+    .input-label {
+        display: block;
+        font-weight: 600;
+        margin-bottom: 8px;
+        font-size: 13px;
+        color: #333;
+    }
+
+    .text-input {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        background: #fafafa;
+        font-size: 14px;
+        box-sizing: border-box;
+    }
+
+    .text-input:focus {
+        outline: none;
+        border-color: var(--gold);
+        background: #fff;
+    }
+
+    /* === INTERACTIVE STAR WIDGET CSS === */
+    .star-widget {
+        display: flex;
+        flex-direction: row;
+        /* Normal order */
+        gap: 8px;
+    }
+
+    .star-icon {
+        font-size: 24px;
+        color: var(--grey);
+        /* Default inactive color */
+        cursor: pointer;
+        transition: color 0.2s, transform 0.1s;
+    }
+
+    /* Hover interaction handled by JS primarily, but css hover for scale */
+    .star-icon:hover {
+        transform: scale(1.15);
+    }
+
+    /* Active State (Applied by JS) */
+    .star-icon.active {
+        color: var(--gold);
+    }
+
+    /* Make span-based stars align and focusable */
+    .star-icon {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 36px;
+        height: 36px;
+        font-size: 28px;
+        line-height: 1;
+        user-select: none;
+    }
+
+    .star-icon:focus {
+        outline: 2px solid rgba(255, 193, 7, 0.18);
+        outline-offset: 3px;
+    }
+
+    /* Stars used in review list */
+    .u-star {
+        font-size: 14px;
+        margin-right: 4px;
+        color: var(--gold);
+        display: inline-block;
+        line-height: 1;
+    }
+
+    .u-star.empty {
+        color: #ccc;
     }
 
     .submit-btn {
         width: 100%;
-        padding: 15px;
-        background: var(--star-primary);
+        background: var(--gold);
+        color: #fff;
         border: none;
-        color: white;
+        padding: 14px;
         font-weight: bold;
-        border-radius: 8px;
+        border-radius: 6px;
         cursor: pointer;
-        font-size: 1rem;
-        transition: 0.3s;
-        box-shadow: 0 4px 10px rgba(197, 164, 126, 0.4);
+        font-size: 15px;
+        transition: background 0.2s;
     }
 
     .submit-btn:hover {
-        filter: brightness(1.1);
-        transform: translateY(-2px);
+        background: #e0a800;
     }
 
-    /* Footer Adjustment */
-    footer.spline-footer {
-        background-color: #000;
-        /* Ensure footer stays black */
-        color: white;
-    }
-
-    @media (max-width: 900px) {
-        .content-grid {
+    @media(max-width: 768px) {
+        .content-split {
             grid-template-columns: 1fr;
+        }
+
+        .stats-panel {
+            flex-direction: column;
         }
     }
 </style>
 
-<section class="review-page-container">
+<div class="review-container">
 
-    <div class="review-stats-container">
-        <div class="rating-bars">
+    <div class="stats-panel">
+        <div class="bars-area">
             <?php
-            $labels = ['FIVE', 'FOUR', 'THREE', 'TWO', 'ONE'];
-            for ($i = 5; $i >= 1; $i--) {
-                $count = $star_counts[$i];
+            $labels = [5 => 'FIVE', 4 => 'FOUR', 3 => 'THREE', 2 => 'TWO', 1 => 'ONE'];
+            foreach ($labels as $star => $label):
+                $count = $star_counts[$star];
                 $percent = $total_reviews > 0 ? ($count / $total_reviews) * 100 : 0;
-                $formatted_percent = number_format($percent, 1);
             ?>
                 <div class="bar-row">
-                    <span class="star-label"><?php echo $labels[5 - $i]; ?></span>
-                    <span style="color: var(--star-primary); margin-right: 10px;"><i class="fas fa-star"></i></span>
-
-                    <div class="progress-track">
-                        <div class="progress-fill" style="width: <?php echo $percent; ?>%;"></div>
+                    <span class="bar-label"><?= $label ?></span>
+                    <div class="bar-track">
+                        <div class="bar-fill" style="width: <?= $percent ?>%;"></div>
                     </div>
-
-                    <span class="percentage-label"><?php echo $formatted_percent; ?>%</span>
-                    <span class="count-label">(<?php echo $count; ?>)</span>
+                    <span class="bar-percent"><?= number_format($percent, 1) ?>%</span>
+                    <span class="bar-count">(<?= $count ?>)</span>
                 </div>
-            <?php } ?>
+            <?php endforeach; ?>
         </div>
 
-        <div class="overall-rating">
-            <div class="big-score"><?php echo $average_rating; ?></div>
-            <div class="stars-display">
+        <div class="score-area">
+            <div class="big-rating"><?= $avg_rating ?></div>
+            <div class="big-stars">
                 <?php
                 for ($i = 1; $i <= 5; $i++) {
-                    if ($i <= round($average_rating)) echo '<i class="fas fa-star"></i>';
-                    else echo '<i class="far fa-star" style="color:var(--star-secondary)"></i>';
+                    echo ($i <= round($avg_rating)) ? '<span class="u-star">★</span>' : '<span class="u-star empty">★</span>';
                 }
                 ?>
             </div>
-            <p style="color: #777; margin-top: 5px;"><?php echo $total_reviews; ?> Ratings</p>
+            <div style="font-size:13px; color:#666;"><?= $total_reviews ?> Ratings</div>
         </div>
     </div>
 
-    <div class="content-grid">
-        <div class="feedback-list">
-            <h2 class="section-title">Recent Feedbacks</h2>
+    <div class="content-split">
 
-            <?php if ($result_reviews->num_rows > 0): ?>
-                <?php while ($row = $result_reviews->fetch_assoc()): ?>
-                    <div class="review-card">
-                        <div class="reviewer-header">
-                            <img src="<?php echo $row['image'] ? $row['image'] : 'https://cdn-icons-png.flaticon.com/512/149/149071.png'; ?>" alt="User" class="avatar">
-                            <div class="reviewer-info">
-                                <h4><?php echo htmlspecialchars($row['name']); ?></h4>
-                                <div class="card-stars">
-                                    <?php
-                                    for ($k = 1; $k <= 5; $k++) {
-                                        if ($k <= $row['rating']) echo '<i class="fas fa-star"></i>';
-                                        else echo '<i class="fas fa-star" style="color:var(--star-secondary)"></i>';
-                                    }
-                                    ?>
-                                </div>
-                                <span class="review-date"><?php echo date('F j, Y', strtotime($row['created_at'])); ?></span>
+        <div>
+            <h3 class="section-header">Recent Feedbacks</h3>
+            <?php if ($reviews_res->num_rows > 0): ?>
+                <?php while ($row = $reviews_res->fetch_assoc()): ?>
+                    <div class="review-item">
+                        <img src="<?= $row['image'] ? '../uploads/customers/' . $row['image'] : 'https://cdn-icons-png.flaticon.com/512/149/149071.png' ?>" class="u-avatar">
+                        <div>
+                            <span class="u-name"><?= htmlspecialchars($row['name']) ?></span>
+                            <span class="u-date"><?= date('F d, Y', strtotime($row['created_at'])) ?></span>
+                            <div class="u-stars">
+                                <?php for ($k = 1; $k <= 5; $k++) echo ($k <= $row['rating']) ? '<span class="u-star">★</span>' : '<span class="u-star empty">★</span>'; ?>
                             </div>
+                            <p class="u-text"><?= htmlspecialchars($row['review']) ?></p>
                         </div>
-                        <p class="review-text">
-                            <?php echo htmlspecialchars($row['review']); ?>
-                        </p>
                     </div>
                 <?php endwhile; ?>
             <?php else: ?>
-                <p style="color:#666;">No reviews yet. Be the first!</p>
+                <p style="color:#777">No reviews yet.</p>
             <?php endif; ?>
         </div>
 
-        <div class="review-form-container">
-            <h2 class="section-title">Add a Review</h2>
-            <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="POST" id="reviewForm">
+        <div>
+            <h3 class="section-header">Add a Review</h3>
+            <div class="form-panel">
+                <form method="POST" action="" id="reviewForm">
 
-                <div class="input-group">
-                    <label>Your Rating</label>
-                    <input type="hidden" name="rating" id="ratingValue" value="0" required>
+                    <div class="input-wrap">
+                        <label class="input-label">Your Rating </label>
 
-                    <div class="star-rating-widget" id="starWidget">
-                        <i class="fas fa-star star-item" data-value="1"></i>
-                        <i class="fas fa-star star-item" data-value="2"></i>
-                        <i class="fas fa-star star-item" data-value="3"></i>
-                        <i class="fas fa-star star-item" data-value="4"></i>
-                        <i class="fas fa-star star-item" data-value="5"></i>
+                        <input type="hidden" name="rating" id="ratingValue" value="0">
+
+                        <div class="star-widget" role="radiogroup" aria-label="Rating">
+                            <span class="star-icon" data-value="1" role="radio" tabindex="0" aria-checked="false" aria-label="1 star">★</span>
+                            <span class="star-icon" data-value="2" role="radio" tabindex="0" aria-checked="false" aria-label="2 stars">★</span>
+                            <span class="star-icon" data-value="3" role="radio" tabindex="0" aria-checked="false" aria-label="3 stars">★</span>
+                            <span class="star-icon" data-value="4" role="radio" tabindex="0" aria-checked="false" aria-label="4 stars">★</span>
+                            <span class="star-icon" data-value="5" role="radio" tabindex="0" aria-checked="false" aria-label="5 stars">★</span>
+                        </div>
                     </div>
-                </div>
 
-                <div class="input-group">
-                    <label>Name</label>
-                    <input type="text" name="name" placeholder="John Doe" required>
-                </div>
+                   
 
-                <div class="input-group">
-                    <label>Email</label>
-                    <input type="email" name="email" placeholder="john@example.com" required>
-                </div>
+                    <div class="input-wrap">
+                        <label class="input-label">Write Your Review *</label>
+                        <textarea name="review_text" rows="4" class="text-input" placeholder="Share your experience..." required></textarea>
+                    </div>
 
-                <div class="input-group">
-                    <label>Write Your Review</label>
-                    <textarea name="review_text" rows="5" placeholder="Share your experience..." required></textarea>
-                </div>
-
-                <button type="submit" class="submit-btn">SUBMIT REVIEW</button>
-            </form>
+                    <button type="submit" class="submit-btn">Submit Review</button>
+                </form>
+            </div>
         </div>
+
     </div>
-
-</section>
-
+</div>
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const stars = document.querySelectorAll('.star-item');
+    document.addEventListener("DOMContentLoaded", function() {
+        const stars = document.querySelectorAll('.star-icon');
         const ratingInput = document.getElementById('ratingValue');
-        let currentRating = 0;
+        let currentRating = 0; // Tracks the clicked/locked rating
 
         stars.forEach(star => {
-            // Mouse Over: Highlight stars up to this one
+            // 1. HOVER: Highlight stars up to the one being hovered
             star.addEventListener('mouseover', function() {
                 const value = parseInt(this.getAttribute('data-value'));
                 highlightStars(value);
             });
 
-            // Mouse Leave: Reset to current selected rating
+            // 2. MOUSE OUT: Reset to the locked rating (if any)
             star.addEventListener('mouseout', function() {
                 highlightStars(currentRating);
             });
 
-            // Click: Set the rating
+            // 3. CLICK: Lock the rating
             star.addEventListener('click', function() {
                 currentRating = parseInt(this.getAttribute('data-value'));
                 ratingInput.value = currentRating;
@@ -459,21 +479,23 @@ $result_reviews = $conn->query($sql_reviews);
         });
 
         function highlightStars(count) {
-            stars.forEach(star => {
-                const value = parseInt(star.getAttribute('data-value'));
-                if (value <= count) {
-                    star.classList.add('active');
+            stars.forEach(s => {
+                const val = parseInt(s.getAttribute('data-value'));
+                if (val <= count) {
+                    s.classList.add('active'); // Turn Gold
+                    s.style.color = 'var(--gold)';
                 } else {
-                    star.classList.remove('active');
+                    s.classList.remove('active'); // Turn Grey
+                    s.style.color = 'var(--grey)';
                 }
             });
         }
 
-        // Prevent form submission if no rating selected
+        // Prevent submission if rating is 0
         document.getElementById('reviewForm').addEventListener('submit', function(e) {
             if (ratingInput.value == 0) {
                 e.preventDefault();
-                alert('Please select a star rating!');
+                alert("Please click a star to rate!");
             }
         });
     });
