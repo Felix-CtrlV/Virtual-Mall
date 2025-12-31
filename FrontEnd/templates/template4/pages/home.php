@@ -44,6 +44,7 @@ $tagline = $supplier['tagline'] ?? 'Redefine Your Limits.';
     /* --- 2. HERO SECTION (CINEMATIC) --- */
     .hero-section {
         position: relative;
+        top: -65px;
         height: 100vh;
         width: 100%;
         display: flex;

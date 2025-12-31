@@ -360,6 +360,53 @@ $reviews_res = $conn->query($sql_reviews);
             flex-direction: column;
         }
     }
+
+    .radio {
+        display: flex;
+        gap: 10px;
+        justify-content: center;
+        flex-direction: row-reverse;
+        margin: 20px 0px;
+    }
+
+    /* Hide radios properly */
+    .radio input {
+        position: absolute;
+        opacity: 0;
+        pointer-events: none;
+    }
+
+    .radio label {
+        cursor: pointer;
+        font-size: 30px;
+        display: inline-flex;
+        transition: transform 0.2s ease;
+        will-change: transform;
+    }
+
+    /* SVG baseline */
+    .radio label svg {
+        fill: #666;
+        transition: fill 0.2s ease, filter 0.2s ease;
+    }
+
+    /* Hover scale only (NO infinite animation) */
+    .radio label:hover {
+        transform: scale(1.15);
+    }
+
+    /* Hover glow (static, not animated) */
+    .radio label:hover svg {
+        fill: #ff9e0b;
+        filter: drop-shadow(0 0 12px rgba(255, 158, 11, .8));
+    }
+
+    /* Checked stars */
+    .radio input:checked~label svg,
+    .radio input:checked+label svg {
+        fill: #ff9e0b;
+        filter: drop-shadow(0 0 12px rgba(255, 158, 11, .9));
+    }
 </style>
 
 <div class="review-container">
@@ -429,23 +476,56 @@ $reviews_res = $conn->query($sql_reviews);
 
                         <input type="hidden" name="rating" id="ratingValue" value="0">
 
-                        <div class="star-widget" role="radiogroup" aria-label="Rating">
-                            <span class="star-icon" data-value="1" role="radio" tabindex="0" aria-checked="false" aria-label="1 star">★</span>
-                            <span class="star-icon" data-value="2" role="radio" tabindex="0" aria-checked="false" aria-label="2 stars">★</span>
-                            <span class="star-icon" data-value="3" role="radio" tabindex="0" aria-checked="false" aria-label="3 stars">★</span>
-                            <span class="star-icon" data-value="4" role="radio" tabindex="0" aria-checked="false" aria-label="4 stars">★</span>
-                            <span class="star-icon" data-value="5" role="radio" tabindex="0" aria-checked="false" aria-label="5 stars">★</span>
+                        <div class="radio">
+                            <input value="1" name="rating" type="radio" id="rating-1" />
+                            <label title="1 stars" for="rating-1">
+                                <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 0 576 512">
+                                    <path
+                                        d="M316.9 18C311.6 7 300.4 0 288.1 0s-23.4 7-28.8 18L195 150.3 51.4 171.5c-12 1.8-22 10.2-25.7 21.7s-.7 24.2 7.9 32.7L137.8 329 113.2 474.7c-2 12 3 24.2 12.9 31.3s23 8 33.8 2.3l128.3-68.5 128.3 68.5c10.8 5.7 23.9 4.9 33.8-2.3s14.9-19.3 12.9-31.3L438.5 329 542.7 225.9c8.6-8.5 11.7-21.2 7.9-32.7s-13.7-19.9-25.7-21.7L381.2 150.3 316.9 18z"></path>
+                                </svg>
+                            </label>
+
+                            <input value="2" name="rating" type="radio" id="rating-2" />
+                            <label title="2 stars" for="rating-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 0 576 512">
+                                    <path
+                                        d="M316.9 18C311.6 7 300.4 0 288.1 0s-23.4 7-28.8 18L195 150.3 51.4 171.5c-12 1.8-22 10.2-25.7 21.7s-.7 24.2 7.9 32.7L137.8 329 113.2 474.7c-2 12 3 24.2 12.9 31.3s23 8 33.8 2.3l128.3-68.5 128.3 68.5c10.8 5.7 23.9 4.9 33.8-2.3s14.9-19.3 12.9-31.3L438.5 329 542.7 225.9c8.6-8.5 11.7-21.2 7.9-32.7s-13.7-19.9-25.7-21.7L381.2 150.3 316.9 18z"></path>
+                                </svg>
+                            </label>
+
+                            <input value="3" name="rating" type="radio" id="rating-3" />
+                            <label title="3 stars" for="rating-3">
+                                <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 0 576 512">
+                                    <path
+                                        d="M316.9 18C311.6 7 300.4 0 288.1 0s-23.4 7-28.8 18L195 150.3 51.4 171.5c-12 1.8-22 10.2-25.7 21.7s-.7 24.2 7.9 32.7L137.8 329 113.2 474.7c-2 12 3 24.2 12.9 31.3s23 8 33.8 2.3l128.3-68.5 128.3 68.5c10.8 5.7 23.9 4.9 33.8-2.3s14.9-19.3 12.9-31.3L438.5 329 542.7 225.9c8.6-8.5 11.7-21.2 7.9-32.7s-13.7-19.9-25.7-21.7L381.2 150.3 316.9 18z"></path>
+                                </svg>
+                            </label>
+
+                            <input value="4" name="rating" type="radio" id="rating-4" />
+                            <label title="4 stars" for="rating-4">
+                                <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 0 576 512">
+                                    <path
+                                        d="M316.9 18C311.6 7 300.4 0 288.1 0s-23.4 7-28.8 18L195 150.3 51.4 171.5c-12 1.8-22 10.2-25.7 21.7s-.7 24.2 7.9 32.7L137.8 329 113.2 474.7c-2 12 3 24.2 12.9 31.3s23 8 33.8 2.3l128.3-68.5 128.3 68.5c10.8 5.7 23.9 4.9 33.8-2.3s14.9-19.3 12.9-31.3L438.5 329 542.7 225.9c8.6-8.5 11.7-21.2 7.9-32.7s-13.7-19.9-25.7-21.7L381.2 150.3 316.9 18z"></path>
+                                </svg>
+                            </label>
+
+                            <input value="5" name="rating" type="radio" id="rating-5" />
+                            <label title="5 star" for="rating-5">
+                                <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 0 576 512">
+                                    <path
+                                        d="M316.9 18C311.6 7 300.4 0 288.1 0s-23.4 7-28.8 18L195 150.3 51.4 171.5c-12 1.8-22 10.2-25.7 21.7s-.7 24.2 7.9 32.7L137.8 329 113.2 474.7c-2 12 3 24.2 12.9 31.3s23 8 33.8 2.3l128.3-68.5 128.3 68.5c10.8 5.7 23.9 4.9 33.8-2.3s14.9-19.3 12.9-31.3L438.5 329 542.7 225.9c8.6-8.5 11.7-21.2 7.9-32.7s-13.7-19.9-25.7-21.7L381.2 150.3 316.9 18z"></path>
+                                </svg>
+                            </label>
                         </div>
-                    </div>
 
-                   
 
-                    <div class="input-wrap">
-                        <label class="input-label">Write Your Review *</label>
-                        <textarea name="review_text" rows="4" class="text-input" placeholder="Share your experience..." required></textarea>
-                    </div>
 
-                    <button type="submit" class="submit-btn">Submit Review</button>
+                        <div class="input-wrap">
+                            <label class="input-label">Write Your Review *</label>
+                            <textarea name="review_text" rows="4" class="text-input" placeholder="Share your experience..." required></textarea>
+                        </div>
+
+                        <button type="submit" class="submit-btn">Submit Review</button>
                 </form>
             </div>
         </div>
