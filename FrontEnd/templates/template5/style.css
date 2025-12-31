@@ -28,6 +28,7 @@ html{
     animation: contentReveal 1.2s cubic-bezier(0.23, 1, 0.32, 1) forwards;
 }
 
+
 /* 3D Floating Category Title */
 .category-title {
     display: inline-flex;
@@ -43,17 +44,21 @@ html{
     letter-spacing: 2px;
     box-shadow: 0 10px 20px rgba(138, 109, 59, 0.3);
     animation: float3D 3s ease-in-out infinite;
+    
 }
 
 
 .hero-content h2 {
+  
     font-size: 4rem;
     line-height: 1.1;
     margin: 25px 0;
     color:var(--gold-primary);
     transform-style: preserve-3d;
     animation: float3D 3s ease-in-out infinite;
+  
 }
+
 
 :root {
     --gold-primary: #bf953f;
@@ -80,6 +85,12 @@ html{
     z-index: 10;
     /* Slide in from left with a 3D rotation */
     animation: contentReveal 1.2s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+    position: relative;
+    right:100px;
+    margin-bottom:150px;
+}
+.hero-content1{
+    margin-left:30px;
 }
 
 /* 3D Floating Category Title */
@@ -173,7 +184,7 @@ html{
     width: 60%;
     height: 100%;
     /* 3D Entry Animation */
-    animation: imageSlideIn 1.5s ease-out forwards;
+    animation: imageSlideIn 0.8s ease-out forwards;
 }
 
 .banner-shape-wrapper {
@@ -220,16 +231,7 @@ html{
     100% { background-position: 0% 50%; }
 }
 
-@keyframes imageSlideIn {
-    from {
-        transform: translateX(100%) scale(1.2);
-        opacity: 0;
-    }
-    to {
-        transform: translateX(0) scale(1);
-        opacity: 1;
-    }
-}
+
 
 /* 4. The 3D Masked Image */
 .hero-banner {
@@ -239,7 +241,7 @@ html{
     width: 60%;
     height: 100%;
     /* 3D Entry Animation */
-    animation: imageSlideIn 1.5s ease-out forwards;
+    animation: imageSlideIn 0.8s ease-out forwards;
 }
 
 .banner-shape-wrapper {
@@ -258,9 +260,9 @@ html{
     transition: transform 0.8s ease-out;
 }
 
-.hero-banner:hover .fashion-banner {
+/* .hero-banner:hover .fashion-banner {
     transform: scale(1.1) rotate(1deg);
-}
+} */
 
 /* --- ANIMATIONS --- */
 
@@ -299,17 +301,16 @@ html{
 
 
 /*Nav link CSS code */
-/* Gold Color Hover Effect */
-
+/* Gold Color Hover Effect *
 .nav-item a {
     position: relative;
-    color: #000; /* မူရင်းစာသားအရောင် */
+    color: #000; /*
     text-decoration: none;
     transition: color 0.3s ease;
 }
 
 
-/* အောက်ခြေမြဉ်း (Line) ကို ရွှေရောင်ပြောင်းရန် */
+/*  */
 .nav-item a::after {
     content: '';
     position: absolute;
@@ -317,16 +318,16 @@ html{
     height: 2px;
     bottom: -4px;
     left: 0;
-    /* Gold Gradient သုံးထားတာကြောင့် ပိုပြီး ဇိမ်ကျကျ (Luxury) ဖြစ်စေပါတယ် */
+    
     background:rgb(159, 135, 2);
     transition: width 0.3s ease-in-out;
 }
 
-/* Hover လုပ်တဲ့အခါ မြဉ်းတိုလေး ရှည်ထွက်လာစေရန် */
+
 .nav-item a:hover::after {
     width: 100%;
 }
-/* General Styles */
+
 body {
     font-family: 'Playfair Display', serif; /* Use a Serif font for luxury */
     margin: 0;
@@ -335,14 +336,14 @@ body {
 }
 
 
-/* Contact Section */
+
 .hero {
     height: 80vh;
     display: flex;
     align-items: center;
     justify-content: center;
     text-align: center;
-    background: #f9f9f9; /* Replace with a high-res watch image */
+    background: #ffffff; /* Replace with a high-res watch image */
     padding: 0 20px;
 }
 

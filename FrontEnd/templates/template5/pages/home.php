@@ -19,7 +19,7 @@ $current_page = 'home.php';
        <span class="category-title">
     <i class="fa-solid fa-clock"></i> Luxury Watch
 </span>
-        <h2>New collection<br>for Luxury Watch</h2>
+        <h2 style="width:500px;"><?= $shop_assets['description']?></h2>
         <p class="hero-description"><b><i>Discover Your Favorite Smart Watch.</b></i></p> 
         <br>
         <a href="?supplier_id=<?= $supplier['supplier_id'] ?>&page=products" class="btn-shop-now">
@@ -40,10 +40,11 @@ $current_page = 'home.php';
     <!--Contact Section -->
 
 <section class="hero">
-    <div class="hero-content">
+    <div class="hero-content1">
         <span class="subtitle">Handcrafted Excellence</span>
         <h1>Precision in Every Second</h1>
         <p>Discover the art of horology with our limited edition 2025 collection.</p>
+        <br>
         <a href="#" class="btn-primary">Explore Collection</a>
     </div>
 </section>
