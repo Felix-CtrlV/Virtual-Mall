@@ -1,6 +1,7 @@
 <section class="page-content product-page">
     <div class="container">
-        <h2 class="text-center mb-4"><i>Luxury Watch</i></h2>
+        <h2 class="text-center mb-4"><i>2026 Luxury Watch List</i></h2>
+        
 
         <div class="search-container">
             <form action="" method="GET" class="d-flex" onsubmit="event.preventDefault();">
@@ -99,5 +100,7 @@
 
     <div class="footer-bottom">
         <p>&copy; <?php echo date("Y"); ?> <span>MALLTIVERSE</span>. All rights reserved.</p>
+        
+
     </div>
 </footer>
