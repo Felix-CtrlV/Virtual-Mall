@@ -11,7 +11,7 @@
         
 
 
-<section class="about-section clearfix">
+    <section class="about-section clearfix">
     <div class="container2">
         <div class="about-img-float">
             <img src="https://images.unsplash.com/photo-1523170335258-f5ed11844a49?auto=format&fit=crop&w=800" alt="Luxury Watch">
